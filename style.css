@@ -1,0 +1,198 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.anton-regular {
+    font-family: "Anton", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.material-symbols-outlined {
+        font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+}
+.material-symbols-outlined {
+     font-variation-settings:
+     'FILL' 0,
+     'wght' 400,
+     'GRAD' 0,
+     'opsz' 24
+}
+.material-symbols-outlined {
+     font-variation-settings:
+     'FILL' 0,
+     'wght' 400,
+     'GRAD' 0,
+     'opsz' 24
+}
+html,
+body {
+    height: 100%;
+    background-color: #f0f0f0; /* Helle graue Hintergrundfarbe */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+#game {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.title {
+    color: black;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    flex-grow: 1;
+    margin: 10px;
+}
+
+.icon-button {
+    background-color: transparent; /* Transparenter Hintergrund */
+    border: none; /* Kein Rahmen */
+    font-size: 20px; /* Größe des Textes (oder Icons) */
+    cursor: pointer;
+    padding: 10px; /* Padding für den Button */
+}
+
+.icon-button i {
+    font-size: 20px; /* Größe des Icons */
+    color: black; /* Farbe des Icons */
+}
+
+#board-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 6px; /* Etwas mehr Platz zwischen den Feldern */
+}
+
+.square {
+    border: 2px solid rgb(200, 200, 200); /* Hellere Ränder */
+    background-color: white; /* Weiße Hintergrundfarbe */
+    width: 50px;
+    height: 50px;
+    font-size: 20px; /* Kleinere Schriftgröße */
+    font-weight: bold;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#keyboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.keyboard-row button {
+    font-family: inherit;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    padding: 15px;
+    width: 10%;
+    height: 10%;
+    background-color: white;
+    color: black;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.keyboard-row button:hover {
+    background-color: #e0e0e0; /* Leichtes Grau bei Hover */
+}
+
+.keyboard-row button:active {
+    background-color: #d0d0d0; /* Dunkleres Grau bei Aktivierung */
+}
+
+.keyboard-row button.wide-button {
+    width: 20%;
+    text-align: left; /* Text zentrieren */
+}
+.spacer-half {
+    flex-grow: 0.5;
+}
+.modal {
+    display: none; /* Versteckt das Modal standardmäßig */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 300px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.modal-content button {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#closeModalButton {
+    background-color: #f44336;
+}
+
