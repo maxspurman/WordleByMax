@@ -29,17 +29,50 @@
         <div class="title-container">
             <span class="material-symbols-outlined">help</span>
             <h1 class="title">Wordle by Max</h1>
-            <span class="material-symbols-outlined">leaderboard</span>
+            <span class="material-symbols-outlined" id="statsIcon">leaderboard</span>
         </div>
     </header>
 
-    <div id="endGameModal" class="modal">
+    <div id="statsModal" class="modal">
         <div class="modal-content">
-            <p id="endGameMessage"></p>
-            <button id="closeModalButton">Close</button>
+            <h2>Game Statistics</h2>
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <p>Games Played</p>
+                    <span id="gamesPlayedText"></span>
+                </div>
+                <div class="stat-item">
+                    <p>Games Won</p>
+                    <span id="gamesWonText"></span>
+                </div>
+                <div class="stat-item">
+                    <p>Current Streak</p>
+                    <span id="currentStreakText"></span>
+                </div>
+                <div class="stat-item">
+                    <p>Max Streak</p>
+                    <span id="maxStreakText"></span>
+                </div>
+                <div class="stat-item">
+                    <p>Win Percentage</p>
+                    <div class="progress-circle">
+                        <div id="winPercentageCircle" class="circle-fill"></div>
+                    </div>
+                    <span id="winPercentageText"></span>
+                </div>
+                <div class="stat-item">
+                    <p>Average Guesses Per Win</p>
+                    <span id="averageGuessesText"></span>
+                </div>
+            </div>
             <button id="playAgainButton">Play Again</button>
+            <button id="closeStatsButton">Close</button>
+            <button id="resetStatsButton">Reset Stats</button>
+
         </div>
     </div>
+
+
 
     <div id="game">
         <div id="board-container">

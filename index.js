@@ -4,27 +4,63 @@ document.addEventListener("DOMContentLoaded", () => {
     let word;
     let guessedWordCount = 0;
     const maxGuesses = 6;
+    let gameOver = false; // Flag to check if the game is over
 
     const keys = document.querySelectorAll(".keyboard-row button");
-    const endGameModal = document.getElementById("endGameModal");
-    const endGameMessage = document.getElementById("endGameMessage");
+    const statsModal = document.getElementById("statsModal");
+    const gamesPlayedEl = document.getElementById("gamesPlayed");
+    const gamesWonEl = document.getElementById("gamesWon");
+    const winPercentageEl = document.getElementById("winPercentage");
+    const currentStreakEl = document.getElementById("currentStreak");
+    const maxStreakEl = document.getElementById("maxStreak");
     const playAgainButton = document.getElementById("playAgainButton");
-    const closeModalButton = document.getElementById("closeModalButton");
+    const closeStatsButton = document.getElementById("closeStatsButton");
+    const statsIcon = document.getElementById("statsIcon");
+    const resetStatsButton = document.getElementById("resetStatsButton");
+
+    let stats = JSON.parse(localStorage.getItem("wordGameStats")) || {
+        gamesPlayed: 0,
+        gamesWon: 0,
+        currentStreak: 0,
+        maxStreak: 0,
+    };
 
     function initializeGame() {
-        guessedWords = [[]];
-        availableSpace = 1;
-        guessedWordCount = 0;
+        // Check if there's an ongoing game
+        const savedGame = JSON.parse(localStorage.getItem("ongoingGame"));
 
-        resetBoard();
-        resetKeyboard();
-        getNewWord();
+        if (savedGame) {
+            guessedWords = savedGame.guessedWords;
+            availableSpace = savedGame.availableSpace;
+            guessedWordCount = savedGame.guessedWordCount;
+            word = savedGame.word;
+            gameOver = savedGame.gameOver;
+
+            // Restore the board
+            guessedWords.forEach((wordArr, rowIndex) => {
+                wordArr.forEach((letter, letterIndex) => {
+                    const letterId = rowIndex * 5 + letterIndex + 1;
+                    const letterEl = document.getElementById(letterId);
+                    letterEl.textContent = letter;
+                });
+            });
+        } else {
+            guessedWords = [[]];
+            availableSpace = 1;
+            guessedWordCount = 0;
+            gameOver = false; // Reset the game over flag
+
+            resetBoard();
+            resetKeyboard();
+            getNewWord();
+        }
     }
+
 
     function getNewWord() {
         const randomIndex = Math.floor(Math.random() * dictionary.length);
         word = dictionary[randomIndex].toUpperCase();
-        console.log(word); // Debugging purposes, remove for production
+        console.log(word);
     }
 
     function resetBoard() {
@@ -48,6 +84,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateGuessedWords(letter) {
+        if (gameOver) return; // Block input if the game is over
+
         const currentWordArr = getCurrentWordArr();
 
         if (currentWordArr && currentWordArr.length < 5) {
@@ -96,6 +134,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function handleSubmitWord() {
+        if (gameOver) return; // Block input if the game is over
+
         const currentWordArr = getCurrentWordArr();
 
         if (currentWordArr.length !== 5) {
@@ -126,18 +166,18 @@ document.addEventListener("DOMContentLoaded", () => {
         updateKeyboard(currentWordArr);
         guessedWordCount += 1;
 
-        if (currentWord === word) {
-            endGameMessage.textContent = "Congratulations! You guessed the word!";
-            endGameModal.style.display = "block";
-        } else if (guessedWordCount === maxGuesses) {
-            endGameMessage.textContent = `Sorry, you have no more guesses! The word was ${word}.`;
-            endGameModal.style.display = "block";
+        if (currentWord === word || guessedWordCount === maxGuesses) {
+            gameOver = true; // Mark the game as over
+            updateStats(currentWord === word);
+            setTimeout(showStatsModal, interval * 5); // Show stats after animations
         } else {
             guessedWords.push([]);
         }
     }
 
     function handleDeleteLetter() {
+        if (gameOver) return; // Block input if the game is over
+
         const currentWordArr = getCurrentWordArr();
 
         if (currentWordArr.length > 0) {
@@ -161,6 +201,55 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function showStatsModal() {
+        const winPercentage = Math.round((stats.gamesWon / stats.gamesPlayed) * 100) || 0;
+        const averageGuesses = stats.gamesWon > 0 ? (stats.totalGuesses / stats.gamesWon).toFixed(2) : 0;
+
+        // Update Text
+        document.getElementById("gamesPlayedText").textContent = stats.gamesPlayed;
+        document.getElementById("gamesWonText").textContent = stats.gamesWon;
+        document.getElementById("currentStreakText").textContent = stats.currentStreak;
+        document.getElementById("maxStreakText").textContent = stats.maxStreak;
+        document.getElementById("winPercentageText").textContent = `${winPercentage}%`;
+        document.getElementById("averageGuessesText").textContent = averageGuesses;
+
+        // Update Circle
+        document.getElementById("winPercentageCircle").style.background = `conic-gradient(#4CAF50 0% ${winPercentage}%, #ddd ${winPercentage}% 100%)`;
+
+        statsModal.style.display = "flex";
+    }
+
+    function updateStats(isWin) {
+        stats.gamesPlayed += 1;
+
+        if (isWin) {
+            stats.gamesWon += 1;
+            stats.currentStreak += 1;
+            if (stats.currentStreak > stats.maxStreak) {
+                stats.maxStreak = stats.currentStreak;
+            }
+            stats.totalGuesses += guessedWordCount;
+        } else {
+            stats.currentStreak = 0;
+        }
+
+        localStorage.setItem("wordGameStats", JSON.stringify(stats));
+    }
+
+    function resetStats() {
+        stats = {
+            gamesPlayed: 0,
+            gamesWon: 0,
+            currentStreak: 0,
+            maxStreak: 0,
+            totalGuesses: 0,
+        };
+        localStorage.setItem("wordGameStats", JSON.stringify(stats));
+
+        // Update the modal with reset values
+        showStatsModal();
+    }
+
     // Initial setup
     createSquares();
     initializeGame();
@@ -179,13 +268,38 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     });
 
+    // Adding keydown event listener for normal keyboard input
+    document.addEventListener("keydown", (event) => {
+        if (gameOver) return; // Block input if the game is over
+
+        const key = event.key.toUpperCase();
+
+        if (key === "ENTER") {
+            handleSubmitWord();
+        } else if (key === "BACKSPACE") {
+            handleDeleteLetter();
+        } else if (/^[A-Z]$/.test(key)) {  // Check if key is a letter
+            updateGuessedWords(key);
+        }
+    });
+
     // Modal button event listeners
     playAgainButton.onclick = () => {
-        endGameModal.style.display = "none";
+        statsModal.style.display = "none";
         initializeGame();
     };
 
-    closeModalButton.onclick = () => {
-        endGameModal.style.display = "none";
+    closeStatsButton.onclick = () => {
+        statsModal.style.display = "none";
     };
+
+    if (statsIcon) {
+        statsIcon.onclick = () => {
+            showStatsModal();
+        };
+    }
+    resetStatsButton.onclick = () => {
+        resetStats();
+    };
+
 });
